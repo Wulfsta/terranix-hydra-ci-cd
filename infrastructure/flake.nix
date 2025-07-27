@@ -90,7 +90,6 @@
           stage: config: hash:
           pkgs.stdenv.mkDerivation {
             name = "${stage}-infrastructure";
-            __contentAddressed = true;
 
             outputHashMode = "recursive";
             outputHashAlgo = "sha256";
