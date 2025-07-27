@@ -132,57 +132,6 @@
             mkInfra "prod" self.packages.${system}.prod-infrastructure-config
               "sha256-VYFimekPtTyLtUUqCUTS+EA34ywMIYk1Fzfu5vvRpsw=";
         };
-
-        # Development shell
-        devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            terraform
-            terranix.packages.${system}.terranix
-            awscli2
-            jq
-          ];
-        };
-
-        # Apps for infrastructure management
-        apps = {
-          plan-staging = {
-            type = "app";
-            program = toString (
-              pkgs.writeScript "plan-staging" ''
-                #!${pkgs.bash}/bin/bash
-                set -euo pipefail
-                echo "Planning staging infrastructure..."
-
-                # Generate Terraform configuration
-                nix build .#staging-infrastructure --out-link staging-config
-
-                # Initialize and plan
-                cd staging-config
-                ${pkgs.terraform}/bin/terraform init
-                ${pkgs.terraform}/bin/terraform plan
-              ''
-            );
-          };
-
-          plan-prod = {
-            type = "app";
-            program = toString (
-              pkgs.writeScript "plan-prod" ''
-                #!${pkgs.bash}/bin/bash
-                set -euo pipefail
-                echo "Planning production infrastructure..."
-
-                # Generate Terraform configuration
-                nix build .#prod-infrastructure --out-link prod-config
-
-                # Initialize and plan
-                cd prod-config
-                ${pkgs.terraform}/bin/terraform init
-                ${pkgs.terraform}/bin/terraform plan
-              ''
-            );
-          };
-        };
       }
     );
 }
